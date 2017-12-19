@@ -18,4 +18,5 @@ if [ ! -e /var/lib/letsencrypt/dhparam.pem ]; then
   openssl dhparam -out /var/lib/letsencrypt/dhparam.pem 2048
 fi
 
+crond
 nginx -g "daemon off;"
