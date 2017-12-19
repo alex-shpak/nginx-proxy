@@ -1,4 +1,6 @@
 ## Nginx proxy in docker
+[![Docker Build Status](https://img.shields.io/docker/build/lxshpk/nginx-proxy.svg)]() 
+[![ImageLayers Size](https://img.shields.io/imagelayers/image-size/lxshpk/nginx-proxy/latest.svg)]()  
 Simple nginx reverse proxy including letsencrypt certificates auto issue and update
 
 ### Features
