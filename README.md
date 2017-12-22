@@ -12,7 +12,7 @@ Simple nginx reverse proxy including letsencrypt certificates auto issue and upd
 ### Usage
 See docker compose example [docker-compose.yml](docker-compose.yml)
 ```yml
-version: '3'
+version: "3"
 services:
   nginx:
     image: lxshpk/nginx-proxy

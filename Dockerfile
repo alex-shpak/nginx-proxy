@@ -6,8 +6,7 @@ WORKDIR /etc/nginx/conf.d/
 
 ADD conf/* /etc/nginx/conf.d/
 ADD renew.sh /etc/periodic/daily/
-ADD entrypoint.sh /
-ADD certbot-domains.py /
+ADD entrypoint.sh certbot-domains.py certbot-certname.py /
 
 VOLUME /etc/letsencrypt /var/lib/letsencrypt
 

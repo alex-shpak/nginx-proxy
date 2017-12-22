@@ -1,8 +1,9 @@
 #!/bin/sh
 
 # Used in certificate path
-envsubst '$HTTP_DOMAINS, $HTTPS_DOMAINS, $FIRST_DOMAIN' < "http.conf" > "http.conf~"
-envsubst '$HTTP_DOMAINS, $HTTPS_DOMAINS, $FIRST_DOMAIN' < "https.conf" > "https.conf~"
+export CERTNAME=`python /certbot-certname.py`
+envsubst '$HTTP_DOMAINS, $HTTPS_DOMAINS, $CERTNAME' < "http.conf" > "http.conf~"
+envsubst '$HTTP_DOMAINS, $HTTPS_DOMAINS, $CERTNAME' < "https.conf" > "https.conf~"
 
 mv http.conf~ http.conf
 mv https.conf~ https.conf
