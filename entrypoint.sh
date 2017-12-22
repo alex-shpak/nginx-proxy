@@ -10,7 +10,6 @@ mv https.conf~ https.conf
 
 if [ ! -e /etc/letsencrypt/live ]; then
   certbot certonly --standalone --non-interactive $CERTBOT_ARGS \
-    --cert-name nginx \
     --agree-tos --email $CERTBOT_EMAIL \
     `python /certbot-domains.py`
 fi
