@@ -5,7 +5,7 @@ RUN apk add --no-cache certbot openssl
 WORKDIR /etc/nginx/conf.d/
 
 ADD conf/* /etc/nginx/conf.d/
-ADD renew.sh /etc/periodic/daily/
+ADD renew.sh /etc/periodic/daily/renew
 ADD entrypoint.sh certbot-domains.py certbot-certname.py /
 
 VOLUME /etc/letsencrypt /var/lib/letsencrypt
