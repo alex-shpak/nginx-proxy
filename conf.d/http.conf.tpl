@@ -7,7 +7,7 @@ add_header X-XSS-Protection "1; mode=block";
 # http -> https redirect
 server {
   listen 80;
-  server_name $https_domains;
+  server_name $HTTPS_DOMAINS;
 
   include conf.d/certbot.inc;
   location / {
@@ -18,7 +18,7 @@ server {
 # http hosts
 server {
   listen 80;
-  server_name $http_domains;
+  server_name $HTTP_DOMAINS;
   
   include conf.d/certbot.inc;
   include conf.d/proxy.inc;
@@ -27,8 +27,8 @@ server {
 # https hosts
 server {
   listen 443 ssl default deferred;
-  server_name $https_domains;
-  
+  server_name $HTTPS_DOMAINS;
+
   include conf.d/ssl.inc;
   include conf.d/proxy.inc;
 }

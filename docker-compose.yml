@@ -2,13 +2,14 @@ version: '3'
 services:
   nginx:
     image: lxshpk/nginx-proxy
+    # build: .
     restart: unless-stopped
     ports:
       - "80:80"
       - "443:443"
     environment:
-      UPSTREAMS: |
-        https://example.com -> http://service:8080
+      NGINX_PROXY_PASS: |
+        http://example.com -> http://service:8080
         https://sub.example.com -> http://service:8081
         http://external.example.com -> http://external.com
 
