@@ -1,3 +1,4 @@
+# Reverse proxy configuration
 location / {
     proxy_pass http://$upstream;
     proxy_set_header X-Real-IP $remote_addr;

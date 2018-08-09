@@ -1,22 +1,32 @@
 #!/bin/sh
 
-# Used in certificate path
-export CERTNAME=`python /certbot-certname.py`
-envsubst '$HTTP_DOMAINS, $HTTPS_DOMAINS, $CERTNAME' < "http.conf" > "http.conf~"
-envsubst '$HTTP_DOMAINS, $HTTPS_DOMAINS, $CERTNAME' < "https.conf" > "https.conf~"
+# Prepare nginx configuration
+HTTP_DOMAINS=`gen.py https`
+HTTPS_DOMAINS=`gen.py https`
+CERBOT_DOMAINS=`gen.py certbot`
 
-mv http.conf~ http.conf
-mv https.conf~ https.conf
+cat <<EOL > variables.conf
+server {
+  set \$http_domains "$HTTP_DOMAINS";
+  set \$https_domains "$HTTPS_DOMAINS";
+}
+EOL
 
+gen.py upstreams > upstreams.conf
+
+# Request certificates at first start
 if [ ! -e /etc/letsencrypt/live ]; then
   certbot certonly --standalone --non-interactive $CERTBOT_ARGS \
+    --cert-name cert \
     --agree-tos --email $CERTBOT_EMAIL \
-    `python /certbot-domains.py`
+    $CERBOT_DOMAINS # || exit $?
 fi
 
+# Generate dhparams if not existing yet
 if [ ! -e /var/lib/letsencrypt/dhparam.pem ]; then
   openssl dhparam -out /var/lib/letsencrypt/dhparam.pem 2048
 fi
 
+# Start
 crond
 nginx -g "daemon off;"
