@@ -2,7 +2,7 @@
 [![Docker Build Status](https://img.shields.io/docker/build/lxshpk/nginx-proxy.svg)](https://hub.docker.com/r/lxshpk/nginx-proxy/)
 [![Docker Build Status](https://img.shields.io/docker/pulls/lxshpk/nginx-proxy.svg)](https://hub.docker.com/r/lxshpk/nginx-proxy/)  
 
-Simple nginx reverse proxy including letsencrypt certificates auto issue and update.  
+A very simple nginx reverse proxy with automatic letsencrypt certificates.  
 If you are looking for more featured proxy check [here](https://github.com/jwilder/nginx-proxy)
 
 ### Features
@@ -34,6 +34,7 @@ services:
 
       NGINX_CUSTOM_CONFIG: |
         # you can write your custom config here
+        # server_tokens off;
 
       CERTBOT_EMAIL: mail@example.com
       CERTBOT_ARGS: --dry-run

@@ -2,26 +2,24 @@
 import os, sys, argparse, re, logging
 from urlparse import urlparse
 
-PROXY_PASS_VAR = 'NGINX_PROXY_PASS'
-PROXY_PASS_SEPARATOR = '->'
+PROXY_PASS_LINE_PATTERN = r'^\s*(\S+)\s*->\s*(\S+)\s*$'
 
 logging.basicConfig()
 logger = logging.getLogger('gen')
 
 
 def yield_upstreams():
-  if not os.environ.has_key(PROXY_PASS_VAR):
-    logger.warning('Proxy hosts are not defined')
-    return
+  for line in sys.stdin.readlines():
+    if line.isspace():
+      continue
 
-  for line in os.environ[PROXY_PASS_VAR].splitlines():
-    pair = line.split(PROXY_PASS_SEPARATOR)
-
-    if len(pair) != 2:
-      logger.error('Wrong $%s format', PROXY_PASS_VAR)
+    match = re.match(PROXY_PASS_LINE_PATTERN, line)
+    if match is None:
+      logger.error('Invalid input format at %s', line)
       sys.exit(1)
 
-    host, upstream = map(lambda it: urlparse(it.strip()), pair)
+    pair = match.groups()
+    host, upstream = map(urlparse, pair)
 
     if host.scheme not in ['http', 'https']:
       logger.error('Scheme not defined in %s, should be http or https', host.geturl())
@@ -31,25 +29,20 @@ def yield_upstreams():
     yield (host, upstream)
 
 
-def print_upstreams_file(upstreams):
+def upstreams_conf(upstreams):
   for host, upstream in upstreams:
-    print 'upstream %s { server %s; }' % (upstream.name, upstream.netloc)
+    yield 'upstream %s { server %s; }' % (upstream.name, upstream.netloc)
 
-  print 'map $host $upstream {'
+  yield 'map $host $upstream {'
   for host, upstream in upstreams:
-    print '    %s "%s";' % (host.hostname, upstream.name)
-  print '}'
+    yield '    %s "%s";' % (host.hostname, upstream.name)
+  yield '}'
 
 
-def print_domains(upstreams, scheme, prefix=''):
-  http_domains = []
-  for host, upstream in upstreams:
-    if host.scheme == scheme:
-      http_domains.append(host.hostname)
-
-  print ' '.join(
-    [prefix + host for host in http_domains]
-  )
+def domains(upstreams, scheme, prefix=''):
+  upstreams = filter(lambda (host, u): host.scheme == scheme, upstreams)
+  for host, u in upstreams:
+    yield prefix + host.hostname
 
 
 if __name__ == '__main__':
@@ -57,15 +50,15 @@ if __name__ == '__main__':
   parser.add_argument('action', choices=['upstreams', 'http', 'https', 'certbot'])
   args = parser.parse_args()
 
-  upstreams = yield_upstreams()
+  upstreams = list(yield_upstreams())
   if args.action == 'upstreams':
-    print_upstreams_file(upstreams)
+    print '\n'.join(upstreams_conf(upstreams))
 
   elif args.action == 'http':
-    print_domains(upstreams, 'http')
+    print ' '.join(domains(upstreams, 'http'))
 
   elif args.action == 'https':
-    print_domains(upstreams, 'https')
+    print ' '.join(domains(upstreams, 'https'))
 
   elif args.action == 'certbot':
-    print_domains(upstreams, 'https', '-d ')
+    print ' '.join(domains(upstreams, 'https', '-d '))
