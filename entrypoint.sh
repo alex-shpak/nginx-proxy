@@ -7,7 +7,7 @@ HTTPS_DOMAINS=$(echo "$NGINX_PROXY_PASS"    | gen.py https)
 CERBOT_DOMAINS=$(echo "$NGINX_PROXY_PASS"   | gen.py certbot)
 NGINX_UPSTREAMS=$(echo "$NGINX_PROXY_PASS"  | gen.py upstreams)
 
-export HTTP_DOMAINS
+export HTTP_DOMAINS="${HTTP_DOMAINS:-localhost}" # use localhost if no http hosts defined
 export HTTPS_DOMAINS
 
 envsubst '$HTTP_DOMAINS $HTTPS_DOMAINS' < http.conf.tpl > http.conf
