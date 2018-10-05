@@ -14,7 +14,7 @@ envsubst '$HTTP_DOMAINS $HTTPS_DOMAINS' < http.conf.tpl > http.conf
 echo "$NGINX_UPSTREAMS" > upstreams.conf
 
 # Write custom nginx config
-if [[ ! -z $NGINX_CUSTOM_CONFIG ]]; then
+if [[ ! -z "$NGINX_CUSTOM_CONFIG" ]]; then
   echo "$NGINX_CUSTOM_CONFIG" > custom.conf
 fi
 
