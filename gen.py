@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import os, sys, argparse, re, logging, hashlib
 from urlparse import urlparse
 
