@@ -4,7 +4,7 @@ set -e
 # Prepare nginx configuration
 HTTP_DOMAINS=$(echo "$NGINX_PROXY_PASS"     | gen.py http)
 HTTPS_DOMAINS=$(echo "$NGINX_PROXY_PASS"    | gen.py https)
-CERBOT_DOMAINS=$(echo "$NGINX_PROXY_PASS"   | gen.py certbot)
+CERTBOT_DOMAINS=$(echo "$NGINX_PROXY_PASS"  | gen.py certbot)
 NGINX_UPSTREAMS=$(echo "$NGINX_PROXY_PASS"  | gen.py upstreams)
 
 export HTTP_DOMAINS="${HTTP_DOMAINS:-localhost}" # use localhost if no http hosts defined
@@ -23,7 +23,7 @@ if [ ! -z $HTTPS_DOMAINS ] && [ ! -e /etc/letsencrypt/live ]; then
   certbot certonly --standalone --non-interactive $CERTBOT_ARGS \
     --cert-name cert \
     --agree-tos --email $CERTBOT_EMAIL \
-    $CERBOT_DOMAINS
+    $CERTBOT_DOMAINS
 fi
 
 # Generate dhparams if not existing yet
