@@ -19,7 +19,7 @@ if [[ ! -z $NGINX_CUSTOM_CONFIG ]]; then
 fi
 
 # Request certificates at first start (if there are any https hosts)
-if [ ! -z $HTTPS_DOMAINS ] && [ ! -e /etc/letsencrypt/live ]; then
+if [ ! -z "$HTTPS_DOMAINS" ] && [ ! -e /etc/letsencrypt/live ]; then
   certbot certonly --standalone --non-interactive $CERTBOT_ARGS \
     --cert-name cert \
     --agree-tos --email $CERTBOT_EMAIL \
