@@ -1,5 +1,4 @@
-#!/usr/bin/python
-import os, sys, argparse, re, logging
+import os, sys, argparse, re, logging, hashlib
 from urlparse import urlparse
 
 PROXY_PASS_LINE_PATTERN = r'^\s*(\S+)\s*->\s*(\S+)\s*$'
@@ -22,10 +21,10 @@ def yield_upstreams():
     host, upstream = map(urlparse, pair)
 
     if host.scheme not in ['http', 'https']:
-      logger.error('Scheme not defined in %s, should be http or https', host.geturl())
+      logger.error('Wrong scheme in %s, should be http or https', host.geturl())
       sys.exit(1)
 
-    upstream.name = re.sub('[:.]', '_', upstream.netloc)
+    upstream.name = hashlib.sha1(line).hexdigest()
     yield (host, upstream)
 
 
