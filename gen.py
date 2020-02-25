@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import os, sys, argparse, re, logging, hashlib
 from urlparse import urlparse
