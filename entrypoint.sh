@@ -2,10 +2,10 @@
 set -e
 
 # Prepare nginx configuration
-HTTP_DOMAINS=$(echo "$NGINX_PROXY_PASS"     | gen.py http)
-HTTPS_DOMAINS=$(echo "$NGINX_PROXY_PASS"    | gen.py https)
-CERTBOT_DOMAINS=$(echo "$NGINX_PROXY_PASS"  | gen.py certbot)
-NGINX_UPSTREAMS=$(echo "$NGINX_PROXY_PASS"  | gen.py upstreams)
+HTTP_DOMAINS=$(echo "$NGINX_PROXY_PASS"     | python3 gen.py http)
+HTTPS_DOMAINS=$(echo "$NGINX_PROXY_PASS"    | python3 gen.py https)
+CERTBOT_DOMAINS=$(echo "$NGINX_PROXY_PASS"  | python3 gen.py certbot)
+NGINX_UPSTREAMS=$(echo "$NGINX_PROXY_PASS"  | python3 gen.py upstreams)
 
 export HTTP_DOMAINS="${HTTP_DOMAINS:-localhost}" # use localhost if no http hosts defined
 export HTTPS_DOMAINS

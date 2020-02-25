@@ -1,5 +1,3 @@
-#!python3
-
 import os, sys, argparse, re, logging, hashlib
 from urllib.parse import urlparse
 
