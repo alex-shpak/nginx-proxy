@@ -20,7 +20,7 @@ def yield_upstreams():
       sys.exit(1)
 
     pair = match.groups()
-    host, upstream = list(map(urlparse, pair))
+    host, upstream = map(urlparse, pair)
 
     if host.scheme not in ['http', 'https']:
       logger.error('Wrong scheme in %s, should be http or https', host.geturl())
@@ -41,8 +41,8 @@ def upstreams_conf(upstreams):
 
 
 def domains(upstreams, scheme, prefix=''):
-  upstreams = filter(lambda host, u: host.scheme == scheme, upstreams)
-  for host, _ in upstreams:
+  upstreams = filter(lambda (host, u): host.scheme == scheme, upstreams)
+  for host, u in upstreams:
     yield prefix + host.hostname
 
 
@@ -53,13 +53,13 @@ if __name__ == '__main__':
 
   upstreams = list(yield_upstreams())
   if args.action == 'upstreams':
-    print('\n'.join(upstreams_conf(upstreams)))
+    print '\n'.join(upstreams_conf(upstreams))
 
   elif args.action == 'http':
-    print(' '.join(domains(upstreams, 'http')))
+    print ' '.join(domains(upstreams, 'http'))
 
   elif args.action == 'https':
-    print(' '.join(domains(upstreams, 'https')))
+    print ' '.join(domains(upstreams, 'https'))
 
   elif args.action == 'certbot':
-    print(' '.join(domains(upstreams, 'https', '-d ')))
+    print ' '.join(domains(upstreams, 'https', '-d '))
