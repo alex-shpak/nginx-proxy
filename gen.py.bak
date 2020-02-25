@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!python3
 
 import os, sys, argparse, re, logging, hashlib
 from urllib.parse import urlparse
@@ -20,29 +20,30 @@ def yield_upstreams():
       sys.exit(1)
 
     pair = match.groups()
-    host, upstream = map(urlparse, pair)
+    host, upstream = list(map(urlparse, pair))
 
     if host.scheme not in ['http', 'https']:
       logger.error('Wrong scheme in %s, should be http or https', host.geturl())
       sys.exit(1)
 
-    upstream.name = hashlib.sha1(line).hexdigest()
-    yield (host, upstream)
+    name = hashlib.sha1(line.encode('utf-8')).hexdigest()
+    yield (host, upstream, name)
 
 
 def upstreams_conf(upstreams):
-  for host, upstream in upstreams:
-    yield 'upstream %s { server %s; }' % (upstream.name, upstream.netloc)
+  for host, upstream, name in upstreams:
+    yield 'upstream %s { server %s; }' % (name, upstream.netloc)
 
   yield 'map $host $upstream {'
-  for host, upstream in upstreams:
-    yield '    %s "%s";' % (host.hostname, upstream.name)
+  for host, upstream, name in upstreams:
+    yield '    %s "%s";' % (host.hostname, name)
   yield '}'
 
 
 def domains(upstreams, scheme, prefix=''):
-  upstreams = filter(lambda (host, u): host.scheme == scheme, upstreams)
-  for host, u in upstreams:
+  print(upstreams)
+  upstreams = filter(lambda host, u, n: host.scheme == scheme, upstreams)
+  for host, u, n in upstreams:
     yield prefix + host.hostname
 
 
@@ -53,13 +54,13 @@ if __name__ == '__main__':
 
   upstreams = list(yield_upstreams())
   if args.action == 'upstreams':
-    print '\n'.join(upstreams_conf(upstreams))
+    print('\n'.join(upstreams_conf(upstreams)))
 
   elif args.action == 'http':
-    print ' '.join(domains(upstreams, 'http'))
+    print(' '.join(domains(upstreams, 'http')))
 
   elif args.action == 'https':
-    print ' '.join(domains(upstreams, 'https'))
+    print(' '.join(domains(upstreams, 'https')))
 
   elif args.action == 'certbot':
-    print ' '.join(domains(upstreams, 'https', '-d '))
+    print(' '.join(domains(upstreams, 'https', '-d ')))

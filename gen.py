@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!python3
 
 import os, sys, argparse, re, logging, hashlib
 from urllib.parse import urlparse
@@ -26,23 +26,23 @@ def yield_upstreams():
       logger.error('Wrong scheme in %s, should be http or https', host.geturl())
       sys.exit(1)
 
-    upstream.name = hashlib.sha1(line).hexdigest()
-    yield (host, upstream)
+    name = hashlib.sha1(line.encode('utf-8')).hexdigest()
+    yield (host, upstream, name)
 
 
 def upstreams_conf(upstreams):
-  for host, upstream in upstreams:
-    yield 'upstream %s { server %s; }' % (upstream.name, upstream.netloc)
+  for host, upstream, name in upstreams:
+    yield 'upstream %s { server %s; }' % (name, upstream.netloc)
 
   yield 'map $host $upstream {'
-  for host, upstream in upstreams:
-    yield '    %s "%s";' % (host.hostname, upstream.name)
+  for host, upstream, name in upstreams:
+    yield '    %s "%s";' % (host.hostname, name)
   yield '}'
 
 
 def domains(upstreams, scheme, prefix=''):
-  upstreams = filter(lambda host, u: host.scheme == scheme, upstreams)
-  for host, _ in upstreams:
+  upstreams = filter(lambda line: line[0].scheme == scheme, upstreams)
+  for host, _, _ in upstreams:
     yield prefix + host.hostname
 
 
